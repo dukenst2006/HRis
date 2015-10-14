@@ -35,7 +35,7 @@ class Pagination
             $direction = $direction == 'asc' ? 'desc' : 'asc';
         }
 
-        return '<a href="/' . $settings['path'] . "?page=1&sort=$column&direction=$direction" . '">' . $name . '  <span class="' . $direction . ' "></span> </a>';
+        return '<a href="/'.$settings['path']."?page=1&sort=$column&direction=$direction".'">'.$name.'  <span class="'.$direction.' "></span> </a>';
     }
 
     /**
@@ -48,9 +48,9 @@ class Pagination
      */
     public static function setupPagination($data, $settings)
     {
-        $path = '/' . $settings['path'] . '/?page=';
-        $sort = '&sort=' . $settings['sort'];
-        $direction = '&direction=' . $settings['direction'];
+        $path = '/'.$settings['path'].'/?page=';
+        $sort = '&sort='.$settings['sort'];
+        $direction = '&direction='.$settings['direction'];
 
         if ($data->lastPage() > 10) {
             if ($data->currentPage() < 10) {
@@ -63,16 +63,16 @@ class Pagination
         $end_page = $data->lastPage();
 
         $data = [
-            'currentPage' => $data->currentPage(),
-            'prevPageUrl' => $path . ($data->currentPage() == 1 ? 1 : $data->currentPage() - 1),
-            'nextPageUrl' => $data->nextPageUrl(),
-            'totalPages' => $data->lastPage(),
-            'total' => $data->total(),
-            'start_page' => 1,
-            'end_page' => $end_page,
-            'pathPage' => $path,
-            'sortPage' => $sort,
-            'directionPage' => $direction,
+            'currentPage'     => $data->currentPage(),
+            'prevPageUrl'     => $path.($data->currentPage() == 1 ? 1 : $data->currentPage() - 1),
+            'nextPageUrl'     => $data->nextPageUrl(),
+            'totalPages'      => $data->lastPage(),
+            'total'           => $data->total(),
+            'start_page'      => 1,
+            'end_page'        => $end_page,
+            'pathPage'        => $path,
+            'sortPage'        => $sort,
+            'directionPage'   => $direction,
             'total_displayed' => ($data->currentPage() == $data->lastPage()) ? ($data->currentPage() - 1) * DATAS_PER_PAGE + $data->count() : $data->currentPage() * $data->count(),
         ];
 

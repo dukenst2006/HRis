@@ -76,14 +76,14 @@ class BaseMenu extends Menu
      */
     protected function role($href)
     {
-        return $this->slashToPeriod($href) . '.view';
+        return $this->slashToPeriod($href).'.view';
     }
 
     /**
      * Get sidebar menu <li> stylesheet classes.
      *
      * @param Navlink $menu
-     * @param bool $is_active
+     * @param bool    $is_active
      *
      * @return string
      *

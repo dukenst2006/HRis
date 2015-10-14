@@ -30,10 +30,10 @@ class HRisSidebar extends BaseMenu
                 return '';
             }
 
-            $output = '<li class="' . $self->stylesheetClasses($menu, $is_active) . '">';
-            $output .= '<a href="/' . $menu->href . '">';
-            $output .= '<i class="fa ' . $menu->icon . '"></i>';
-            $output .= '<span class="nav-label">' . $menu->name . '</span>';
+            $output = '<li class="'.$self->stylesheetClasses($menu, $is_active).'">';
+            $output .= '<a href="/'.$menu->href.'">';
+            $output .= '<i class="fa '.$menu->icon.'"></i>';
+            $output .= '<span class="nav-label">'.$menu->name.'</span>';
             $output .= $is_nested ? '<span class="fa arrow"></span>' : '';
             $output .= '</a>';
             $output .= $body;

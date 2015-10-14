@@ -122,8 +122,8 @@ class QualificationsController extends Controller
         } catch (Exception $e) {
             return $this->xhr(UNABLE_DELETE_MESSAGE);
         }
-        return $this->xhr(SUCCESS_DELETE_MESSAGE);
 
+        return $this->xhr(SUCCESS_DELETE_MESSAGE);
     }
 
     /**

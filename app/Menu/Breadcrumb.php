@@ -76,7 +76,7 @@ class Breadcrumb
      */
     public function isActive($href)
     {
-        if ($this->request->is($href . '*')) {
+        if ($this->request->is($href.'*')) {
             return true;
         }
 
@@ -123,7 +123,7 @@ class Breadcrumb
             }
             $href .= $sublink;
 
-            $links[] = (object)[
+            $links[] = (object) [
                 'name' => $this->linkToPhrase($sublink),
                 'href' => $href,
             ];

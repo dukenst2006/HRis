@@ -13,7 +13,6 @@ namespace HRis\Http\Controllers\Profile;
 use HRis\Eloquent\Employee;
 use HRis\Http\Controllers\Controller;
 use HRis\Http\Requests\Profile\PersonalContactDetailsRequest;
-use HRis\Http\Requests\Profile\PersonalDetailsRequest;
 use Illuminate\Support\Facades\Config;
 
 class PersonalDetailsController extends Controller
@@ -31,9 +30,10 @@ class PersonalDetailsController extends Controller
     }
 
     /**
-     * Updates the Profile - Personal Details and Contact Details
+     * Updates the Profile - Personal Details and Contact Details.
      *
      * @param PersonalContactDetailsRequest $request
+     *
      * @return \Illuminate\Http\JsonResponse
      *
      * @author Bertrand Kintanar
@@ -47,7 +47,7 @@ class PersonalDetailsController extends Controller
 
         $employee = $this->employee->whereId($id)->first();
 
-        if (!$employee || !$employee_id || $employee_id == Config::get('company.employee_id_prefix') . '____') {
+        if (!$employee || !$employee_id || $employee_id == Config::get('company.employee_id_prefix').'____') {
             return $this->xhr(UNABLE_UPDATE_MESSAGE, 500);
         }
 

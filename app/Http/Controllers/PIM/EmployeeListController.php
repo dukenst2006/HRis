@@ -10,7 +10,6 @@
 
 namespace HRis\Http\Controllers\PIM;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use HRis\Eloquent\Employee;
 use HRis\Eloquent\EmployeeSalaryComponent;
 use HRis\Eloquent\SalaryComponent;
@@ -61,7 +60,6 @@ class EmployeeListController extends Controller
         SalaryComponent $salary_component,
         Pagination $pagination
     ) {
-
         $this->employee = $employee;
         $this->employee_salary_component = $employee_salary_component;
         $this->salary_component = $salary_component;

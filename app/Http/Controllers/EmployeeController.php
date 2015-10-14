@@ -27,6 +27,7 @@ class EmployeeController extends Controller
 
     /**
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      *
      * @author Bertrand Kintanar

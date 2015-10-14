@@ -10,7 +10,6 @@
 
 namespace HRis\Http\Requests\Profile;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use HRis\Http\Requests\Request;
 
 /**

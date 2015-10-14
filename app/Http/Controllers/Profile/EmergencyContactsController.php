@@ -33,7 +33,7 @@ class EmergencyContactsController extends Controller
     protected $emergency_contact;
 
     /**
-     * @param Employee $employee
+     * @param Employee         $employee
      * @param EmergencyContact $emergency_contact
      *
      * @author Bertrand Kintanar
@@ -48,6 +48,7 @@ class EmergencyContactsController extends Controller
      * Show the Profile - Emergency Contacts.
      *
      * @param EmergencyContactsRequest $request
+     *
      * @return \Illuminate\View\View
      *
      * @author Bertrand Kintanar
@@ -83,7 +84,6 @@ class EmergencyContactsController extends Controller
         }
 
         return $this->xhr(['emergency_contact' => $emergency_contact, 'text' => SUCCESS_ADD_MESSAGE]);
-
     }
 
     /**
@@ -106,7 +106,6 @@ class EmergencyContactsController extends Controller
         try {
             $attributes = array_filter($request->except('relationships', 'relationship'));
             $emergency_contact->update($attributes);
-
         } catch (Exception $e) {
             return $this->xhr(UNABLE_UPDATE_MESSAGE, 500);
         }
@@ -132,7 +131,7 @@ class EmergencyContactsController extends Controller
         } catch (Exception $e) {
             return $this->xhr(UNABLE_DELETE_MESSAGE);
         }
-        return $this->xhr(SUCCESS_DELETE_MESSAGE);
 
+        return $this->xhr(SUCCESS_DELETE_MESSAGE);
     }
 }

@@ -36,7 +36,8 @@ abstract class Controller extends BaseController
 
     /**
      * @param $data
-     * @param bool|integer $codeOrPaginate
+     * @param bool|int $codeOrPaginate
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function xhr($data, $codeOrPaginate = false)
@@ -54,10 +55,10 @@ abstract class Controller extends BaseController
         if ((is_object($data) || is_array($data)) && count($data) > 0) {
             if ($paginate) {
                 $response['paginator'] = [
-                    'total_count' => $data->total(),
-                    'total_pages' => ceil($data->total() / $data->perPage()),
+                    'total_count'  => $data->total(),
+                    'total_pages'  => ceil($data->total() / $data->perPage()),
                     'current_page' => $data->currentPage(),
-                    'limit' => $data->count()
+                    'limit'        => $data->count(),
                 ];
                 $data = $data->items();
             }
@@ -70,10 +71,10 @@ abstract class Controller extends BaseController
         }
 
         $response['@meta'] = [
-            'server_time' => date('Y-m-d H:i:s'),
+            'server_time'     => date('Y-m-d H:i:s'),
             'server_timezone' => date_default_timezone_get(),
-            'api_version' => '1.0',
-            'execution_time' => microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"] // PHP 5.4.0
+            'api_version'     => '1.0',
+            'execution_time'  => microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], // PHP 5.4.0
         ];
 
         return response()->json($response);

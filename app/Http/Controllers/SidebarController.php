@@ -11,7 +11,6 @@
 namespace HRis\Http\Controllers;
 
 use HRis\Eloquent\Navlink;
-use HRis\Facades\Sidebar;
 
 class SidebarController extends Controller
 {
@@ -28,8 +27,7 @@ class SidebarController extends Controller
 
     public function getChildren($children)
     {
-        foreach ($children as $k => $child)
-        {
+        foreach ($children as $k => $child) {
             $grand_children = Navlink::where('parent_id', $child['id'])->get();
 
             $grand_children->each(function ($item) {
@@ -46,6 +44,4 @@ class SidebarController extends Controller
 
         return $children;
     }
-
-
 }

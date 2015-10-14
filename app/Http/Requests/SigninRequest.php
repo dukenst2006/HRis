@@ -23,12 +23,13 @@ class SigninRequest extends Request
     {
         return [
             'email'    => 'required',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
         ];
     }
 
     /**
      * @param array $errors
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function response(array $errors)

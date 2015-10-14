@@ -17,6 +17,7 @@ abstract class Request extends FormRequest
             $this->logged_user = User::find($user->id);
         }
     }
+
     /**
      * @return mixed
      *

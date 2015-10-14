@@ -127,11 +127,9 @@ class InputSelectController extends Controller
 
     protected function chosen($model, $custom_attributes = null)
     {
-
         $attributes = ['name', 'id'];
 
-        if (is_array($custom_attributes))
-        {
+        if (is_array($custom_attributes)) {
             $attributes = array_merge(['name', 'id'], $custom_attributes);
         }
 
@@ -139,11 +137,9 @@ class InputSelectController extends Controller
 
         $chosen = [];
         foreach ($collection as $item) {
-            if ($custom_attributes)
-            {
+            if ($custom_attributes) {
                 $chosen[] = ['text' => $item->name, 'value' => $item->id, 'class' => $item->class];
-            }
-            else {
+            } else {
                 $chosen[] = ['text' => $item->name, 'value' => $item->id];
             }
         }

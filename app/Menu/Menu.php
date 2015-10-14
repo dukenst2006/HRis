@@ -172,7 +172,7 @@ class Menu extends Breadcrumb
      * Generate nested or non-nested menu HTML string.
      *
      * @param array $tree
-     * @param int $index menu level
+     * @param int   $index menu level
      *
      * @return string
      *

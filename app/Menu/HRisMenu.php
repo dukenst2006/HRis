@@ -28,7 +28,7 @@ class HRisMenu extends BaseMenu
     {
         $this->setInnerBreadcrumb(function ($breadcrumb) {
             $output = '<li>';
-            $output .= '<a href="/' . $breadcrumb->href . '">';
+            $output .= '<a href="/'.$breadcrumb->href.'">';
             $output .= $breadcrumb->name;
             $output .= '</a>';
             $output .= '</li>';
@@ -57,7 +57,7 @@ class HRisMenu extends BaseMenu
 
         if ($this->request->is('pim*')) {
             $this->menu_map(function ($menu) {
-                $link = 'pim/employee-list/' . $this->request->segment(3);
+                $link = 'pim/employee-list/'.$this->request->segment(3);
                 $menu->href = str_replace('profile', $link, $menu->href);
                 $menu->pim = $this->role(str_replace($link, 'pim', $menu->href));
 
@@ -80,7 +80,7 @@ class HRisMenu extends BaseMenu
     public function parent($parent)
     {
         $lists = $this->model
-            ->where('href', 'LIKE', $parent . '%')
+            ->where('href', 'LIKE', $parent.'%')
             ->whereParentId(-1)
             ->lists('parent_id', 'id');
 
@@ -105,9 +105,9 @@ class HRisMenu extends BaseMenu
                 return '';
             }
 
-            $output = '<li class="' . $this->stylesheetClasses($menu, $is_active) . '">';
-            $output .= '<a href="/' . $menu->href . '">';
-            $output .= '<i class="fa ' . $menu->icon . ' m-right-a"></i>';
+            $output = '<li class="'.$this->stylesheetClasses($menu, $is_active).'">';
+            $output .= '<a href="/'.$menu->href.'">';
+            $output .= '<i class="fa '.$menu->icon.' m-right-a"></i>';
             $output .= $menu->name;
             $output .= '</a></li>';
 

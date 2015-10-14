@@ -12,16 +12,16 @@
 */
 
 /***** backend routes *****/
-Route::group(['prefix' => 'api/1.0'], function () {
+Route::group(['prefix'     => 'api/1.0'], function () {
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
         Route::get('refresh', [
             'middleware' => [
                 'before' => 'jwt.auth',
-                'after' => 'jwt.refresh'
+                'after'  => 'jwt.refresh',
             ],
             function () {
                 return response()->json(['code' => 200, 'text' => 'Token refreshed']);
-            }
+            },
         ]);
         Route::post('signin', 'AuthController@signin');
         Route::post('fbsignin', 'AuthController@fbSignin');
@@ -33,7 +33,7 @@ Route::group(['prefix' => 'api/1.0'], function () {
     Route::group(['prefix' => 'employee'], function () {
         Route::post('get-by-employee-id', [
             'middleware' => 'jwt.auth',
-            'uses' => 'EmployeeController@getByEmployeeId'
+            'uses'       => 'EmployeeController@getByEmployeeId',
         ]);
     });
 
@@ -41,64 +41,64 @@ Route::group(['prefix' => 'api/1.0'], function () {
     Route::group(['prefix' => 'profile', 'namespace' => 'Profile'], function () {
         Route::patch('personal-details', [
             'middleware' => 'jwt.auth',
-            'uses' => 'PersonalDetailsController@update'
+            'uses'       => 'PersonalDetailsController@update',
         ]);
         Route::patch('contact-details', [
             'middleware' => 'jwt.auth',
-            'uses' => 'PersonalDetailsController@update'
+            'uses'       => 'PersonalDetailsController@update',
         ]);
         Route::get('emergency-contacts', [
             'middleware' => 'jwt.auth',
-            'uses' => 'EmergencyContactsController@index'
+            'uses'       => 'EmergencyContactsController@index',
         ]);
         Route::post('emergency-contacts', [
             'middleware' => 'jwt.auth',
-            'uses' => 'EmergencyContactsController@store'
+            'uses'       => 'EmergencyContactsController@store',
         ]);
         Route::patch('emergency-contacts', [
             'middleware' => 'jwt.auth',
-            'uses' => 'EmergencyContactsController@update'
+            'uses'       => 'EmergencyContactsController@update',
         ]);
         Route::delete('emergency-contacts', [
             'middleware' => 'jwt.auth',
-            'uses' => 'EmergencyContactsController@destroy'
+            'uses'       => 'EmergencyContactsController@destroy',
         ]);
         Route::get('dependents', [
             'middleware' => 'jwt.auth',
-            'uses' => 'DependentsController@index'
+            'uses'       => 'DependentsController@index',
         ]);
         Route::post('dependents', [
             'middleware' => 'jwt.auth',
-            'uses' => 'DependentsController@store'
+            'uses'       => 'DependentsController@store',
         ]);
         Route::patch('dependents', [
             'middleware' => 'jwt.auth',
-            'uses' => 'DependentsController@update'
+            'uses'       => 'DependentsController@update',
         ]);
         Route::delete('dependents', [
             'middleware' => 'jwt.auth',
-            'uses' => 'DependentsController@destroy'
+            'uses'       => 'DependentsController@destroy',
         ]);
         Route::patch('job', [
             'middleware' => 'jwt.auth',
-            'uses' => 'JobController@update'
+            'uses'       => 'JobController@update',
         ]);
         Route::delete('job', [
             'middleware' => 'jwt.auth',
-            'uses' => 'JobController@destroy'
+            'uses'       => 'JobController@destroy',
         ]);
         Route::group(['prefix' => 'qualifications'], function () {
             Route::post('work-experiences', [
                 'middleware' => 'jwt.auth',
-                'uses' => 'QualificationsController@storeWorkExperience'
+                'uses'       => 'QualificationsController@storeWorkExperience',
             ]);
             Route::delete('work-experiences', [
                 'middleware' => 'jwt.auth',
-                'uses' => 'QualificationsController@destroyWorkExperience'
+                'uses'       => 'QualificationsController@destroyWorkExperience',
             ]);
             Route::patch('work-experiences', [
                 'middleware' => 'jwt.auth',
-                'uses' => 'QualificationsController@updateWorkExperience'
+                'uses'       => 'QualificationsController@updateWorkExperience',
             ]);
         });
     });
@@ -106,7 +106,7 @@ Route::group(['prefix' => 'api/1.0'], function () {
     Route::group(['prefix' => 'pim', 'namespace' => 'PIM'], function () {
         Route::get('employee-list', [
             'middleware' => 'jwt.auth',
-            'uses' => 'EmployeeListController@index'
+            'uses'       => 'EmployeeListController@index',
         ]);
     });
 
@@ -125,7 +125,7 @@ Route::group(['prefix' => 'api/1.0'], function () {
 
     Route::post('sidebar', [
         'middleware' => 'jwt.auth',
-        'uses' => 'SidebarController@index'
+        'uses'       => 'SidebarController@index',
     ]);
 
 });
@@ -134,5 +134,3 @@ Route::group(['prefix' => 'api/1.0'], function () {
 Route::get('/{subs?}', function () {
     return View::make('default');
 })->where(['subs' => '.*']);
-
-

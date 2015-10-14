@@ -22,7 +22,7 @@ class JobController extends Controller
     private $job_history;
 
     /**
-     * @param Employee $employee
+     * @param Employee   $employee
      * @param JobHistory $job_history
      *
      * @author Bertrand Kintanar
@@ -35,6 +35,7 @@ class JobController extends Controller
 
     /**
      * @param JobRequest $request
+     *
      * @return \Illuminate\Http\JsonResponse
      *
      * @author Bertrand Kintanar
@@ -50,7 +51,6 @@ class JobController extends Controller
         $job_history = [];
 
         try {
-
             $_job_history = array_slice($_employee['job_history'], 0, 9);
 
             unset($_job_history['id'], $_job_history['work_shift_id']);
@@ -96,7 +96,7 @@ class JobController extends Controller
         } catch (Exception $e) {
             return $this->xhr(UNABLE_DELETE_MESSAGE);
         }
-        return $this->xhr(SUCCESS_DELETE_MESSAGE);
 
+        return $this->xhr(SUCCESS_DELETE_MESSAGE);
     }
 }

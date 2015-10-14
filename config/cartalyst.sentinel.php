@@ -107,7 +107,7 @@ return [
 
     'persistences' => [
 
-        'model' => 'Cartalyst\Sentinel\Persistences\EloquentPersistence',
+        'model'  => 'Cartalyst\Sentinel\Persistences\EloquentPersistence',
         'single' => false,
 
     ],
@@ -145,7 +145,7 @@ return [
 
     'activations' => [
 
-        'model' => 'Cartalyst\Sentinel\Activations\EloquentActivation',
+        'model'   => 'Cartalyst\Sentinel\Activations\EloquentActivation',
         'expires' => 259200,
         'lottery' => [2, 100],
 
@@ -164,7 +164,7 @@ return [
 
     'reminders' => [
 
-        'model' => 'Cartalyst\Sentinel\Reminders\EloquentReminder',
+        'model'   => 'Cartalyst\Sentinel\Reminders\EloquentReminder',
         'expires' => 14400,
         'lottery' => [2, 100],
 
@@ -213,10 +213,10 @@ return [
 
     'throttling' => [
 
-        'model' => 'Cartalyst\Sentinel\Throttling\EloquentThrottle',
+        'model'  => 'Cartalyst\Sentinel\Throttling\EloquentThrottle',
         'global' => [
 
-            'interval' => 900,
+            'interval'   => 900,
             'thresholds' => [
                 10 => 1,
                 20 => 2,
@@ -229,13 +229,13 @@ return [
         ],
         'ip' => [
 
-            'interval' => 900,
+            'interval'   => 900,
             'thresholds' => 5,
 
         ],
         'user' => [
 
-            'interval' => 900,
+            'interval'   => 900,
             'thresholds' => 5,
 
         ],

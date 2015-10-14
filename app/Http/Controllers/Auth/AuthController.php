@@ -38,12 +38,11 @@ class AuthController extends Controller
             $claims = ['company' => 'HRis'];
             if ($request->has('remember')) {
                 if ($request->get('remember') == true) {
-                    $claims['exp'] = "" . strtotime("+1 year");
+                    $claims['exp'] = ''.strtotime('+1 year');
                 }
             }
             // Attempt to verify the credentials and create a token for the user.
             if ($token = JWTAuth::attempt($credentials, $claims)) {
-
                 $data = JWTAuth::toUser($token);
 
                 $response['code'] = 200;
@@ -64,7 +63,7 @@ class AuthController extends Controller
             $response['code'] = 500;
             $response['text'] = $e->getMessage();
         }
+
         return response()->json($response);
     }
-
 }

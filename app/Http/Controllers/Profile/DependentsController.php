@@ -33,7 +33,7 @@ class DependentsController extends Controller
     protected $dependent;
 
     /**
-     * @param Employee $employee
+     * @param Employee  $employee
      * @param Dependent $dependent
      *
      * @author Bertrand Kintanar
@@ -48,6 +48,7 @@ class DependentsController extends Controller
      * Show the Profile - Dependents.
      *
      * @param DependentsRequest $request
+     *
      * @return \Illuminate\View\View
      *
      * @author Bertrand Kintanar
@@ -83,7 +84,6 @@ class DependentsController extends Controller
         }
 
         return $this->xhr(['dependent' => $dependent, 'text' => SUCCESS_ADD_MESSAGE]);
-
     }
 
     /**
@@ -106,7 +106,6 @@ class DependentsController extends Controller
         try {
             $attributes = array_filter($request->except('relationships', 'relationship'));
             $dependent->update($attributes);
-
         } catch (Exception $e) {
             return $this->xhr(UNABLE_UPDATE_MESSAGE, 500);
         }
@@ -132,7 +131,7 @@ class DependentsController extends Controller
         } catch (Exception $e) {
             return $this->xhr(UNABLE_DELETE_MESSAGE);
         }
-        return $this->xhr(SUCCESS_DELETE_MESSAGE);
 
+        return $this->xhr(SUCCESS_DELETE_MESSAGE);
     }
 }
