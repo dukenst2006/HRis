@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'session'      => 'cartalyst_sentinel',
+    'session' => 'cartalyst_sentinel',
     /*
     |--------------------------------------------------------------------------
     | Cookie Key
@@ -40,7 +40,7 @@ return [
     |
     */
 
-    'cookie'       => 'cartalyst_sentinel',
+    'cookie' => 'cartalyst_sentinel',
     /*
     |--------------------------------------------------------------------------
     | Users
@@ -50,7 +50,7 @@ return [
     |
     */
 
-    'users'        => [
+    'users' => [
 
         'model' => 'HRis\Eloquent\User',
 
@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'roles'        => [
+    'roles' => [
 
         'model' => 'Cartalyst\Sentinel\Roles\EloquentRole',
 
@@ -90,7 +90,7 @@ return [
     |
     */
 
-    'permissions'  => [
+    'permissions' => [
 
         'class' => 'Cartalyst\Sentinel\Permissions\StandardPermissions',
 
@@ -107,7 +107,7 @@ return [
 
     'persistences' => [
 
-        'model'  => 'Cartalyst\Sentinel\Persistences\EloquentPersistence',
+        'model' => 'Cartalyst\Sentinel\Persistences\EloquentPersistence',
         'single' => false,
 
     ],
@@ -125,7 +125,7 @@ return [
     |
     */
 
-    'checkpoints'  => [
+    'checkpoints' => [
 
         'throttle',
         'activation',
@@ -143,9 +143,9 @@ return [
     |
     */
 
-    'activations'  => [
+    'activations' => [
 
-        'model'   => 'Cartalyst\Sentinel\Activations\EloquentActivation',
+        'model' => 'Cartalyst\Sentinel\Activations\EloquentActivation',
         'expires' => 259200,
         'lottery' => [2, 100],
 
@@ -162,9 +162,9 @@ return [
     |
     */
 
-    'reminders'    => [
+    'reminders' => [
 
-        'model'   => 'Cartalyst\Sentinel\Reminders\EloquentReminder',
+        'model' => 'Cartalyst\Sentinel\Reminders\EloquentReminder',
         'expires' => 14400,
         'lottery' => [2, 100],
 
@@ -211,12 +211,12 @@ return [
     |
     */
 
-    'throttling'   => [
+    'throttling' => [
 
-        'model'  => 'Cartalyst\Sentinel\Throttling\EloquentThrottle',
+        'model' => 'Cartalyst\Sentinel\Throttling\EloquentThrottle',
         'global' => [
 
-            'interval'   => 900,
+            'interval' => 900,
             'thresholds' => [
                 10 => 1,
                 20 => 2,
@@ -227,15 +227,15 @@ return [
             ],
 
         ],
-        'ip'     => [
+        'ip' => [
 
-            'interval'   => 900,
+            'interval' => 900,
             'thresholds' => 5,
 
         ],
-        'user'   => [
+        'user' => [
 
-            'interval'   => 900,
+            'interval' => 900,
             'thresholds' => 5,
 
         ],

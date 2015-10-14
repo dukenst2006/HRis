@@ -1,0 +1,14 @@
+<div class="col-sm-6">
+    <div class="profile-img">
+
+        <img id="profile-image" alt="avatar" src="/images/profile/default/0.png"/>
+        <div class="profile-details">
+
+            <h2>{{employee.first_name}} {{employee.last_name}}</h2>
+            <h3>{{job_titles[employee.job_history.job_title_id]}}</h3>
+
+            <h4 class="avatar" style="display: none;"><span id="add_avatar" class="label label-primary">Edit Avatar</span></h4>
+            <h4 class="job-title"><span v-if="employment_statuses[employee.job_history.employment_status_id]" class="label {{employment_statuses[employee.job_history.employment_status_id].class}}">{{employment_statuses[employee.job_history.employment_status_id].name}}</span></h4>
+        </div>
+    </div>
+</div>

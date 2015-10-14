@@ -20,7 +20,6 @@ class RolesTableSeeder extends Seeder
      */
     public function run()
     {
-        // TODO: This should be seeding the groups table not the users table
         DB::table('roles')->delete();
 
         foreach ($this->data() as $role) {

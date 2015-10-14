@@ -1,82 +1,81 @@
 <?php
 
-/**
- * This file is part of the HRis Software package.
- *
- * HRis - Human Resource and Payroll System
- *
- * @link    http://github.com/HB-Co/HRis
- */
-
 namespace HRis\Http\Controllers;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use JWTAuth;
 
-/**
- * Class Controller.
- */
 abstract class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @var
+     * @var null
      */
-    public $logged_user;
+    protected $logged_user = null;
 
     /**
-     * @var array
+     * @var mixed
      */
-    public $data = [];
+    protected $app_list_limit;
 
     /**
-     * @var
+     * Check the logged user from the given token.
      */
-    public $auth;
-
-    /**
-     * @param Sentinel $auth
-     *
-     * @author Bertrand Kintanar
-     */
-    public function __construct(Sentinel $auth)
+    public function __construct()
     {
-        $this->auth = $auth;
-
-        if ($auth::check()) {
-            $this->data['logged_user'] = $this->logged_user = $this->auth = $auth::getUser();
+        $this->app_list_limit = env('APP_LIST_LIMIT', 50);
+        $token = JWTAuth::getToken();
+        if (!empty($token)) {
+            $this->logged_user = JWTAuth::toUser($token);
         }
     }
 
     /**
-     * @param $blade
-     *
-     * @return \Illuminate\View\View
-     *
-     * @author Bertrand Kintanar
+     * @param $data
+     * @param bool|integer $codeOrPaginate
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function template($blade)
+    public function xhr($data, $codeOrPaginate = false)
     {
-        return view($blade, $this->data);
-    }
+        $code = 200;
+        $paginate = false;
+        if (!is_bool($codeOrPaginate)) {
+            $code = $codeOrPaginate;
+        } else {
+            $paginate = $codeOrPaginate;
+        }
+        $response = [];
+        $response['code'] = $code;
 
-    /**
-     * Another way in adding some data in the view.
-     *
-     * @param array $arr
-     *
-     * @return this
-     *
-     * @author Harlequin Doyon
-     */
-    public function data($arr)
-    {
-        $this->data = array_merge($this->data, $arr);
+        if ((is_object($data) || is_array($data)) && count($data) > 0) {
+            if ($paginate) {
+                $response['paginator'] = [
+                    'total_count' => $data->total(),
+                    'total_pages' => ceil($data->total() / $data->perPage()),
+                    'current_page' => $data->currentPage(),
+                    'limit' => $data->count()
+                ];
+                $data = $data->items();
+            }
+            $response['data'] = $data;
+        } else {
+            if (empty($data) || count($data) == 0) {
+                $data = 'Empty result';
+            }
+            $response['text'] = $data;
+        }
 
-        return $this;
+        $response['@meta'] = [
+            'server_time' => date('Y-m-d H:i:s'),
+            'server_timezone' => date_default_timezone_get(),
+            'api_version' => '1.0',
+            'execution_time' => microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"] // PHP 5.4.0
+        ];
+
+        return response()->json($response);
     }
 }

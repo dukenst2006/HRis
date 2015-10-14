@@ -1,20 +1,9 @@
 <?php
 
-/**
- * This file is part of the HRis Software package.
- *
- * HRis - Human Resource and Payroll System
- *
- * @link    http://github.com/HB-Co/HRis
- */
-
 namespace HRis\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
-/**
- * Class Kernel.
- */
 class Kernel extends HttpKernel
 {
     /**
@@ -28,7 +17,7 @@ class Kernel extends HttpKernel
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \HRis\Http\Middleware\VerifyCsrfToken::class,
+//        \HRis\Http\Middleware\VerifyCsrfToken::class,
     ];
 
     /**
@@ -37,8 +26,10 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth'       => \HRis\Http\Middleware\Authenticate::class,
+        'auth' => \HRis\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'guest'      => \HRis\Http\Middleware\RedirectIfAuthenticated::class,
+        'guest' => \HRis\Http\Middleware\RedirectIfAuthenticated::class,
+        'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+        'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
     ];
 }

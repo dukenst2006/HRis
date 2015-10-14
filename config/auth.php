@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'model' => HRis\Eloquent\User::class,
+    'model' => HRis\User::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -59,8 +59,8 @@ return [
     */
 
     'password' => [
-        'email'  => 'emails.password',
-        'table'  => 'password_resets',
+        'email' => 'emails.password',
+        'table' => 'password_resets',
         'expire' => 60,
     ],
 

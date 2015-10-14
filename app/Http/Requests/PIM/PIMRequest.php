@@ -10,7 +10,6 @@
 
 namespace HRis\Http\Requests\PIM;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use HRis\Http\Requests\Request;
 
 /**
@@ -37,25 +36,22 @@ class PIMRequest extends Request
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param Sentinel $user
-     *
      * @return bool
      *
      * @author Bertrand Kintanar
      */
-    public function authorize(Sentinel $user)
+    public function authorize()
     {
-        $user = $user::getUser();
-
         $permission = str_replace('/', '.', Request::path());
+        $permission = substr($permission, 8);
 
         // View
         if (Request::isMethod('get')) {
-            return ($user->hasAccess($permission.'.view'));
+            return ($this->logged_user->hasAccess($permission.'.view'));
         } // Create
         else {
             if (Request::isMethod('post')) {
-                return ($user->hasAccess($permission.'.create'));
+                return ($this->logged_user->hasAccess($permission.'.create'));
             }
         }
     }

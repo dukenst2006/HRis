@@ -1,39 +1,26 @@
 <?php
 
-/**
- * This file is part of the HRis Software package.
- *
- * HRis - Human Resource and Payroll System
- *
- * @link    http://github.com/HB-Co/HRis
- */
-
 namespace HRis\Http\Middleware;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use Closure;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\Auth\Guard;
 
-/**
- * Class RedirectIfAuthenticated.
- */
 class RedirectIfAuthenticated
 {
     /**
-     * The Sentinel implementation.
+     * The Guard implementation.
      *
-     * @var Sentinel
+     * @var Guard
      */
     protected $auth;
 
     /**
      * Create a new filter instance.
      *
-     * @param Sentinel $auth
-     *
-     * @author Bertrand Kintanar
+     * @param  Guard  $auth
+     * @return void
      */
-    public function __construct(Sentinel $auth)
+    public function __construct(Guard $auth)
     {
         $this->auth = $auth;
     }
@@ -41,19 +28,14 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
-     *
-     * @author Bertrand Kintanar
      */
     public function handle($request, Closure $next)
     {
-        $auth = $this->auth;
-
-        if ($auth::check()) {
-            return new RedirectResponse(url('/'));
+        if ($this->auth->check()) {
+            return redirect('/home');
         }
 
         return $next($request);

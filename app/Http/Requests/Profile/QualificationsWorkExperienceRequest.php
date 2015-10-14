@@ -33,33 +33,29 @@ class QualificationsWorkExperienceRequest extends Request
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param Sentinel $user
-     *
      * @return bool
      *
      * @author Bertrand Kintanar
      */
-    public function authorize(Sentinel $user)
+    public function authorize()
     {
-        $user = $user::getUser();
-
         $permission = Request::is('*pim/*') ? 'pim.qualifications.work-experiences' : 'profile.qualifications.work-experiences';
 
         // Create
         if (Request::isMethod('post')) {
-            return ($user->hasAccess($permission.'.create'));
+            return ($this->logged_user->hasAccess($permission.'.create'));
         } // Delete
         else {
             if (Request::isMethod('delete')) {
-                return ($user->hasAccess($permission.'.delete'));
+                return ($this->logged_user->hasAccess($permission.'.delete'));
             } // View
             else {
                 if (Request::isMethod('get')) {
-                    return ($user->hasAccess($permission.'.view'));
+                    return ($this->logged_user->hasAccess($permission.'.view'));
                 } // Update
                 else {
                     if (Request::isMethod('patch')) {
-                        return ($user->hasAccess($permission.'.update'));
+                        return ($this->logged_user->hasAccess($permission.'.update'));
                     }
                 }
             }

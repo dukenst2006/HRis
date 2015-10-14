@@ -116,39 +116,6 @@ class Menu extends Breadcrumb
     }
 
     /**
-     * Add callable to the array to build a nested menu level.
-     *
-     * @return this
-     *
-     * @author Harlequin Doyon
-     */
-    public function addLevel()
-    {
-        $this->callables[] = [
-            'inner' => $this->inner_callable,
-            'outer' => $this->outer_callable,
-        ];
-
-        return $this;
-    }
-
-    public function setLists($lists)
-    {
-        $this->lists = $lists;
-
-        return $this;
-    }
-
-    public function getLists()
-    {
-        if (isset($this->lists) && !empty($this->lists)) {
-            return $this->lists;
-        }
-
-        return $this->model->lists('parent_id', 'id');
-    }
-
-    /**
      * Generate menu.
      *
      * @return string
@@ -168,9 +135,35 @@ class Menu extends Breadcrumb
         return $output;
     }
 
-    public function menu_map(callable $callback)
+    /**
+     * Add callable to the array to build a nested menu level.
+     *
+     * @return this
+     *
+     * @author Harlequin Doyon
+     */
+    public function addLevel()
     {
-        $this->menu_map = $callback;
+        $this->callables[] = [
+            'inner' => $this->inner_callable,
+            'outer' => $this->outer_callable,
+        ];
+
+        return $this;
+    }
+
+    public function getLists()
+    {
+        if (isset($this->lists) && !empty($this->lists)) {
+            return $this->lists;
+        }
+
+        return $this->model->lists('parent_id', 'id');
+    }
+
+    public function setLists($lists)
+    {
+        $this->lists = $lists;
 
         return $this;
     }
@@ -179,7 +172,7 @@ class Menu extends Breadcrumb
      * Generate nested or non-nested menu HTML string.
      *
      * @param array $tree
-     * @param int   $index menu level
+     * @param int $index menu level
      *
      * @return string
      *
@@ -203,7 +196,7 @@ class Menu extends Breadcrumb
 
                 $inner = call_user_func(
                     $callback['inner'],                             // Params
-                                                                    // ------------
+                    // ------------
                     $new_menu,                                      // $menu
                     $this->outputMenuTree($inner_menu, $index + 1), // $body
                     $this->isActive($new_menu->href),               // $is_active
@@ -220,6 +213,57 @@ class Menu extends Breadcrumb
         }
 
         return $output;
+    }
+
+    /**
+     * Get the inner and outer callback for that menu level.
+     *
+     * @param int $index
+     *
+     * @return array ['inner' => callback, 'outer' => callback]
+     *
+     * @author Harlequin Doyon
+     */
+    private function getCallback($index)
+    {
+        $callback = null;
+
+        if (isset($this->callables[$index])) {
+            $callback = $this->callables[$index];
+        } else {
+            // Repeat the last set callable function
+            if (count($this->callables)) {
+                $callback = $this->callables[count($this->callables) - 1];
+            }
+        }
+
+        return $callback;
+    }
+
+    /**
+     * Default method to check if user has thmo ee access to that certain menu
+     * Just override this method to make your custom permission.
+     *
+     * @param Eloquent $menu
+     *
+     * @return bool default to true
+     *
+     * @author Harlequin Doyon
+     */
+    public function hasAccess($menu)
+    {
+        if (isset($this->has_access_callable) && !empty($this->has_access_callable)) {
+            return call_user_func($this->has_access_callable, $menu);
+        }
+
+        return true;
+    }
+
+    public function menu_map(callable $callback)
+    {
+        $this->menu_map = $callback;
+
+        return $this;
     }
 
     /**
@@ -247,25 +291,6 @@ class Menu extends Breadcrumb
     }
 
     /**
-     * Default method to check if user has the access to that certain menu
-     * Just override this method to make your custom permission.
-     *
-     * @param Eloquent $menu
-     *
-     * @return bool default to true
-     *
-     * @author Harlequin Doyon
-     */
-    public function hasAccess($menu)
-    {
-        if (isset($this->has_access_callable) && !empty($this->has_access_callable)) {
-            return call_user_func($this->has_access_callable, $menu);
-        }
-
-        return true;
-    }
-
-    /**
      * Set the has_access variable by method chaining.
      *
      * @param callable $callback
@@ -277,30 +302,5 @@ class Menu extends Breadcrumb
         $this->has_access_callable = $callback;
 
         return $this;
-    }
-
-    /**
-     * Get the inner and outer callback for that menu level.
-     *
-     * @param int $index
-     *
-     * @return array ['inner' => callback, 'outer' => callback]
-     *
-     * @author Harlequin Doyon
-     */
-    private function getCallback($index)
-    {
-        $callback = null;
-
-        if (isset($this->callables[$index])) {
-            $callback = $this->callables[$index];
-        } else {
-            // Repeat the last set callable function
-            if (count($this->callables)) {
-                $callback = $this->callables[count($this->callables) - 1];
-            }
-        }
-
-        return $callback;
     }
 }

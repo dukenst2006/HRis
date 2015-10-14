@@ -7,7 +7,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
      *
      * @var string
      */
-    protected $baseUrl = 'http://localhost:8080';
+    protected $baseUrl = 'http://localhost';
 
     /**
      * Creates the application.
@@ -16,20 +16,10 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
      */
     public function createApplication()
     {
-        $app = require __DIR__.'/../bootstrap/app.php';
+        $app = require __DIR__ . '/../bootstrap/app.php';
 
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;
-    }
-
-    public function logMeIn()
-    {
-        $this->visit('/')
-            ->type('bertrand.kintanar@gmail.com', 'email')
-             ->type('retardko', 'password')
-             ->press('Login')
-             ->see('Dashboard')
-             ->onPage('dashboard');
     }
 }

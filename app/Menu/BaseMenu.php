@@ -2,9 +2,9 @@
 
 namespace HRis\Menu;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use HRis\Eloquent\Navlink;
 use Illuminate\Support\Facades\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class BaseMenu extends Menu
 {
@@ -39,7 +39,10 @@ class BaseMenu extends Menu
      */
     public function hasAccess($menu)
     {
-        $user = Sentinel::getUser();
+        $token = JWTAuth::getToken();
+        if (!empty($token)) {
+            $user = JWTAuth::toUser($token);
+        }
 
         if ($user->hasAccess($this->role($menu->href))) {
             return true;
@@ -73,14 +76,14 @@ class BaseMenu extends Menu
      */
     protected function role($href)
     {
-        return $this->slashToPeriod($href).'.view';
+        return $this->slashToPeriod($href) . '.view';
     }
 
     /**
      * Get sidebar menu <li> stylesheet classes.
      *
      * @param Navlink $menu
-     * @param bool    $is_active
+     * @param bool $is_active
      *
      * @return string
      *

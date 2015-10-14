@@ -10,208 +10,61 @@
 
 namespace HRis\Http\Controllers\Auth;
 
-use Cartalyst\Sentinel\Laravel\Facades\Activation;
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
-use HRis\Eloquent\Employee;
+use HRis\Eloquent\Navlink;
 use HRis\Http\Controllers\Controller;
-use HRis\Http\Requests\Auth\LoginRequest;
-use HRis\Http\Requests\Auth\RegisterRequest;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Mail;
+use HRis\Http\Requests\SigninRequest;
+use JWTAuth;
 
-/**
- * Class AuthController.
- *
- * @Middleware("guest")
- */
 class AuthController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Registration & Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users, as well as the
-    | authentication of existing users. By default, this controller uses
-    | a simple trait to add these behaviors. Why don't you explore it?
-    |
-    */
-
     /**
-     * Show the application login form.
+     * Handles the login request.
      *
-     * @Get("auth/login")
+     * @param SigninRequest $request
      *
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      *
      * @author Bertrand Kintanar
      */
-    public function getLogin()
+    public function signin(SigninRequest $request)
     {
-        $this->data['page_title'] = 'Login';
-
-        return view('auth.login', $this->data);
-    }
-
-    /**
-     * Show the application register form.
-     *
-     * @Get("auth/register")
-     *
-     * @return Response
-     *
-     * @author Bertrand Kintanar
-     */
-    public function getRegister()
-    {
-        $this->data['page_title'] = 'Register';
-
-        return view('auth.register', $this->data);
-    }
-
-    /**
-     * Handle a login request to the application.
-     *
-     * @Post("auth/login")
-     *
-     * @param LoginRequest $request
-     *
-     * @return Response
-     *
-     * @author Bertrand Kintanar
-     */
-    public function postLogin(LoginRequest $request)
-    {
-        $auth = $this->auth;
-
+        $response = [];
         try {
-            $user = $auth::authenticate($request->only('email', 'password'), false);
+            $field = filter_var($request->get('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+            $request->merge([$field => $request->get('email')]);
+            // Grab credentials from the request.
+            $credentials = $request->only($field, 'password');
 
-            if (!$user) {
-                return redirect('/auth/login')->withInput($request->only('email'))->withErrors([
-                    'email' => 'These credentials do not match our records.',
-                ]);
+            $claims = ['company' => 'HRis'];
+            if ($request->has('remember')) {
+                if ($request->get('remember') == true) {
+                    $claims['exp'] = "" . strtotime("+1 year");
+                }
             }
+            // Attempt to verify the credentials and create a token for the user.
+            if ($token = JWTAuth::attempt($credentials, $claims)) {
 
-            $auth::login($user);
+                $data = JWTAuth::toUser($token);
 
-            return redirect()->intended('/dashboard');
-        } catch (PDOException $e) {
-            return redirect('/auth/login')->withInput($request->only('email'))->withErrors([
-                'email' => $e->getMessage(),
-            ]);
+                $response['code'] = 200;
+                $response['token'] = $token;
+                $response['data'] = $data;
+                $response['data']['employee_id'] = $data->employee->employee_id;
+                $response['data']['sidebar'] = Navlink::sidebar($data);
+            } else {
+                $response['code'] = 422;
+                $response['text'] = 'Invalid Credentials';
+            }
+        } catch (JWTException $e) {
+            // Something went wrong whilst attempting to encode the token.
+            $response['code'] = 500;
+            $response['text'] = $e->getMessage();
+        } catch (Exception $e) {
+            // Server Error
+            $response['code'] = 500;
+            $response['text'] = $e->getMessage();
         }
+        return response()->json($response);
     }
 
-    /**
-     * Handle the activation request to the application.
-     *
-     * @Get("auth/activate/{user_id}/{activation_code}")
-     *
-     * @param $user_id
-     * @param $activation_code
-     *
-     * @return Redirect
-     *
-     * @author Bertrand Kintanar
-     */
-    public function getActivateUser($user_id, $activation_code)
-    {
-        $auth = $this->auth;
-
-        $user = $auth::findById($user_id);
-
-        // User not found
-        if (!$user) {
-            App::abort(404, 'user_not_found');
-        }
-
-        if (Activation::complete($user, $activation_code)) {
-            $auth::login($user);
-
-            return redirect('/');
-        } else {
-            App::abort(404, 'activation_code_invalid');
-        }
-    }
-
-    /**
-     * Handle a register request to the application.
-     *
-     * @Post("auth/register")
-     *
-     * @param RegisterRequest $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     *
-     * @author Bertrand Kintanar
-     */
-    public function postRegister(RegisterRequest $request)
-    {
-        $auth = $this->auth;
-
-        $email = $request->get('email');
-
-        $credentials = [
-            'email'    => $email,
-            'password' => $request->get('password'),
-        ];
-
-        $user = $auth::register($credentials);
-
-        $role = $auth::findRoleBySlug('ess');
-
-        $role->users()->attach($user);
-
-        $activation = Activation::create($user);
-
-        $email_data = [
-            'first_name'      => $request->get('first_name'),
-            'last_name'       => $request->get('last_name'),
-            'user_id'         => $user->id,
-            'email'           => $email,
-            'activation_code' => $activation->code,
-        ];
-
-        // Add to queue the user activation email.
-        Mail::queue('emails.activate-user', $email_data, function ($message) use ($email) {
-            $message->from(env('MAIL_ADDRESS', 'mail@example.com'), env('MAIL_NAME', 'Wizard Mailer'));
-            $message->to($email);
-            $message->subject(trans('app.account_activation'));
-        });
-
-        $employee_data = [
-            'employee_id' => Config::get('company.employee_id_prefix').$user->id,
-            'user_id'     => $user->id,
-            'first_name'  => $request->get('first_name'),
-            'last_name'   => $request->get('last_name'),
-            'gender'      => 'M',
-            'work_email'  => $request->get('email'),
-        ];
-
-        $employee = new Employee($employee_data);
-
-        $employee->save();
-
-        $activation_message = 'Please check your email address ('.$email.') to activate your account.';
-
-        return redirect('/auth/login')->with('activation', $activation_message);
-    }
-
-    /**
-     * Log the user out of the application.
-     *
-     * @Get("auth/logout")
-     *
-     * @return Response
-     *
-     * @author Bertrand Kintanar
-     */
-    public function getLogout()
-    {
-        Sentinel::logout();
-
-        return redirect('/');
-    }
 }

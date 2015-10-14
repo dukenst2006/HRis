@@ -1,38 +1,26 @@
 <?php
 
-/**
- * This file is part of the HRis Software package.
- *
- * HRis - Human Resource and Payroll System
- *
- * @link    http://github.com/HB-Co/HRis
- */
-
 namespace HRis\Http\Middleware;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 use Closure;
+use Illuminate\Contracts\Auth\Guard;
 
-/**
- * Class Authenticate.
- */
 class Authenticate
 {
     /**
-     * The Sentinel implementation.
+     * The Guard implementation.
      *
-     * @var Sentinel
+     * @var Guard
      */
     protected $auth;
 
     /**
      * Create a new filter instance.
      *
-     * @param Sentinel $auth
-     *
-     * @author Bertrand Kintanar
+     * @param  Guard  $auth
+     * @return void
      */
-    public function __construct(Sentinel $auth)
+    public function __construct(Guard $auth)
     {
         $this->auth = $auth;
     }
@@ -40,22 +28,17 @@ class Authenticate
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
-     *
-     * @author Bertrand Kintanar
      */
     public function handle($request, Closure $next)
     {
-        $auth = $this->auth;
-
-        if (!$auth::check()) {
+        if ($this->auth->guest()) {
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
-                return redirect()->guest('auth/login');
+                return redirect()->guest('login');
             }
         }
 

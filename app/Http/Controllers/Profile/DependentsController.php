@@ -10,15 +10,10 @@
 
 namespace HRis\Http\Controllers\Profile;
 
-use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
-use Exception;
-use HRis\Eloquent\CustomFieldSection;
 use HRis\Eloquent\Dependent;
 use HRis\Eloquent\Employee;
-use HRis\Eloquent\Navlink;
 use HRis\Http\Controllers\Controller;
 use HRis\Http\Requests\Profile\DependentsRequest;
-use Illuminate\Support\Facades\Request;
 
 /**
  * Class DependentsController.
@@ -28,90 +23,49 @@ use Illuminate\Support\Facades\Request;
 class DependentsController extends Controller
 {
     /**
-     * @var Dependent
-     */
-    protected $dependent;
-
-    /**
      * @var Employee
      */
     protected $employee;
 
     /**
-     * @param Sentinel  $auth
-     * @param Employee  $employee
+     * @var Dependent
+     */
+    protected $dependent;
+
+    /**
+     * @param Employee $employee
      * @param Dependent $dependent
      *
      * @author Bertrand Kintanar
      */
-    public function __construct(Sentinel $auth, Employee $employee, Dependent $dependent)
+    public function __construct(Employee $employee, Dependent $dependent)
     {
-        parent::__construct($auth);
-
         $this->employee = $employee;
         $this->dependent = $dependent;
-
-        $profile_details_id = Navlink::whereName('Dependents')->pluck('id');
-        $this->data['custom_field_sections'] = CustomFieldSection::whereScreenId($profile_details_id)->get();
     }
 
     /**
      * Show the Profile - Dependents.
      *
-     * @Get("profile/dependents")
-     * @Get("pim/employee-list/{id}/dependents")
-     *
      * @param DependentsRequest $request
-     * @param null              $employee_id
-     *
      * @return \Illuminate\View\View
      *
      * @author Bertrand Kintanar
      */
-    public function index(DependentsRequest $request, $employee_id = null)
+    public function index(DependentsRequest $request)
     {
-        $employee = $this->employee->getEmployeeById($employee_id, $this->logged_user->id);
+        $employee = $this->employee->getEmployeeById($request->get('employee_id'), null);
 
+        // TODO: recode this
         if (!$employee) {
             return response()->make(view()->make('errors.404'), 404);
         }
 
-        $this->data['employee'] = $employee;
-
-        $dependents = $this->dependent->whereEmployeeId($employee->id)->get();
-
-        $this->data['pim'] = $request->is('*pim/*') ?: false;
-        $this->data['table'] = $this->setupDataTable($dependents);
-        $this->data['pageTitle'] = $this->data['pim'] ? 'Employee Dependents' : 'My Dependents';
-
-        return $this->template('pages.profile.dependents.view');
-    }
-
-    /**
-     * @param $dependents
-     *
-     * @return array
-     *
-     * @author Bertrand Kintanar
-     */
-    public function setupDataTable($dependents)
-    {
-        $table = [];
-
-        $table['title'] = 'Assigned Dependents';
-        $table['permission'] = str_replace('pim', 'profile', Request::segment(1)).'.dependents';
-        $table['headers'] = ['Full Name', 'Relationship', 'Birth Date'];
-        $table['model'] = ['singular' => 'dependent', 'plural' => 'dependents', 'dashed' => 'dependents'];
-        $table['items'] = $dependents;
-
-        return $table;
+        return $this->xhr($employee);
     }
 
     /**
      * Save the Profile - Dependents.
-     *
-     * @Post("profile/dependents")
-     * @Post("pim/employee-list/{id}/dependents")
      *
      * @param DependentsRequest $request
      *
@@ -122,19 +76,18 @@ class DependentsController extends Controller
     public function store(DependentsRequest $request)
     {
         try {
-            $this->dependent->create($request->all());
+            $attributes = array_filter($request->except('relationships', 'relationship'));
+            $dependent = $this->dependent->create($attributes);
         } catch (Exception $e) {
-            return redirect()->to($request->path())->with('danger', UNABLE_ADD_MESSAGE);
+            return $this->xhr(UNABLE_ADD_MESSAGE, 500);
         }
 
-        return redirect()->to($request->path())->with('success', SUCCESS_ADD_MESSAGE);
+        return $this->xhr(['dependent' => $dependent, 'text' => SUCCESS_ADD_MESSAGE]);
+
     }
 
     /**
      * Update the Profile - Dependents.
-     *
-     * @Patch("profile/dependents")
-     * @Patch("pim/employee-list/{id}/dependents")
      *
      * @param DependentsRequest $request
      *
@@ -147,65 +100,39 @@ class DependentsController extends Controller
         $dependent = $this->dependent->whereId($request->get('dependent_id'))->first();
 
         if (!$dependent) {
-            return redirect()->to($request->path())->with('danger', 'Unable to retrieve record from database.');
+            return redirect()->to($request->path())->with('danger', UNABLE_RETRIEVE_MESSAGE);
         }
 
         try {
-            $dependent->update($request->all());
+            $attributes = array_filter($request->except('relationships', 'relationship'));
+            $dependent->update($attributes);
+
         } catch (Exception $e) {
-            return redirect()->to($request->path())->with('danger', 'Unable to update record.');
+            return $this->xhr(UNABLE_UPDATE_MESSAGE, 500);
         }
 
-        return redirect()->to($request->path())->with('success', 'Record successfully updated.');
+        return $this->xhr(SUCCESS_UPDATE_MESSAGE);
     }
 
     /**
-     * Delete the profile dependent.
-     *
-     * @Delete("ajax/profile/dependents")
-     * @Delete("ajax/pim/employee-list/{id}/dependents")
+     * Delete the Profile - Dependents.
      *
      * @param DependentsRequest $request
      *
-     * @author Bertrand Kintanar
-     */
-    public function deleteDependent(DependentsRequest $request)
-    {
-        if ($request->ajax()) {
-            $dependentId = $request->get('id');
-
-            try {
-                $this->dependent->whereId($dependentId)->delete();
-
-                print('success');
-            } catch (Exception $e) {
-                print('failed');
-            }
-        }
-    }
-
-    /**
-     * Get the profile dependent.
-     *
-     * @Get("ajax/profile/dependents")
-     * @Get("ajax/pim/employee-list/{id}/dependents")
-     *
-     * @param DependentsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      *
      * @author Bertrand Kintanar
      */
-    public function getDependent(DependentsRequest $request)
+    public function destroy(DependentsRequest $request)
     {
-        if ($request->ajax()) {
-            $dependentId = $request->get('id');
+        $dependent_id = $request->get('id');
 
-            try {
-                $dependent = $this->dependent->whereId($dependentId)->first();
-
-                print(json_encode($dependent));
-            } catch (Exception $e) {
-                print('failed');
-            }
+        try {
+            $this->dependent->whereId($dependent_id)->delete();
+        } catch (Exception $e) {
+            return $this->xhr(UNABLE_DELETE_MESSAGE);
         }
+        return $this->xhr(SUCCESS_DELETE_MESSAGE);
+
     }
 }

@@ -86,9 +86,6 @@ class QualificationsController extends Controller
     /**
      * Save the Profile - Qualifications - Work Experiences.
      *
-     * @Post("profile/qualifications/work-experiences")
-     * @Post("pim/employee-list/{id}/qualifications/work-experiences")
-     *
      * @param QualificationsWorkExperienceRequest $request
      * @param WorkExperience                      $workExperience
      *
@@ -99,21 +96,38 @@ class QualificationsController extends Controller
     public function storeWorkExperience(QualificationsWorkExperienceRequest $request, WorkExperience $workExperience)
     {
         try {
-            $workExperience->create($request->all());
+            $work_experience = $workExperience->create($request->all());
         } catch (Exception $e) {
-            return redirect()->to(str_replace('/work-experiences', '', $request->path()))->with('danger',
-                UNABLE_ADD_MESSAGE);
+            return $this->xhr(UNABLE_ADD_MESSAGE, 500);
         }
 
-        return redirect()->to(str_replace('/work-experiences', '', $request->path()))->with('success',
-            SUCCESS_ADD_MESSAGE);
+        return $this->xhr(['work_experience' => $work_experience, 'text' => SUCCESS_ADD_MESSAGE]);
+    }
+
+    /**
+     * Delete the Profile - Qualifications - Work Experiences.
+     *
+     * @param QualificationsWorkExperienceRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @author Bertrand Kintanar
+     */
+    public function destroyWorkExperience(QualificationsWorkExperienceRequest $request, WorkExperience $workExperience)
+    {
+        $work_experience_id = $request->get('id');
+
+        try {
+            $workExperience->whereId($work_experience_id)->delete();
+        } catch (Exception $e) {
+            return $this->xhr(UNABLE_DELETE_MESSAGE);
+        }
+        return $this->xhr(SUCCESS_DELETE_MESSAGE);
+
     }
 
     /**
      * Update the Profile - Qualifications - Work Experiences.
-     *
-     * @Patch("profile/qualifications/work-experiences")
-     * @Patch("pim/employee-list/{id}/qualifications/work-experiences")
      *
      * @param QualificationsWorkExperienceRequest $request
      * @param WorkExperience                      $workExperience
@@ -127,19 +141,16 @@ class QualificationsController extends Controller
         $workExperience = $workExperience->whereId($request->get('work_experience_id'))->first();
 
         if (!$workExperience) {
-            return redirect()->to(str_replace('/work-experiences', '', $request->path()))->with('danger',
-                UNABLE_RETRIEVE_MESSAGE);
+            return $this->xhr(UNABLE_RETRIEVE_MESSAGE, 500);
         }
 
         try {
             $workExperience->update($request->all());
         } catch (Exception $e) {
-            return redirect()->to(str_replace('/work-experiences', '', $request->path()))->with('danger',
-                UNABLE_UPDATE_MESSAGE);
+            return $this->xhr(UNABLE_UPDATE_MESSAGE, 500);
         }
 
-        return redirect()->to(str_replace('/work-experiences', '', $request->path()))->with('success',
-            SUCCESS_UPDATE_MESSAGE);
+        return $this->xhr(SUCCESS_UPDATE_MESSAGE);
     }
 
     /**

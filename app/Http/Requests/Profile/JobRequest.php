@@ -37,28 +37,24 @@ class JobRequest extends Request
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param Sentinel $user
-     *
      * @return bool
      *
      * @author Bertrand Kintanar
      */
-    public function authorize(Sentinel $user)
+    public function authorize()
     {
-        $user = $user::getUser();
-
         $permission = Request::is('*pim/*') ? 'pim.job' : 'profile.job';
 
         // Update
         if (Request::isMethod('patch') || Request::is('*/edit')) {
-            return ($user->hasAccess($permission.'.update'));
+            return ($this->logged_user->hasAccess($permission.'.update'));
         } // View
         else {
             if (Request::isMethod('get')) {
-                return ($user->hasAccess($permission.'.view'));
+                return ($this->logged_user->hasAccess($permission.'.view'));
             } else {
                 if (Request::isMethod('delete')) {
-                    return ($user->hasAccess($permission.'.delete'));
+                    return ($this->logged_user->hasAccess($permission.'.delete'));
                 }
             }
         }

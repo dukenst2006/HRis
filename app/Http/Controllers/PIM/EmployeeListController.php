@@ -20,11 +20,6 @@ use HRis\Services\Pagination;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 
-/**
- * Class EmployeeListController.
- *
- * @Middleware("auth")
- */
 class EmployeeListController extends Controller
 {
     /**
@@ -53,7 +48,6 @@ class EmployeeListController extends Controller
     private $columns;
 
     /**
-     * @param Sentinel                $auth
      * @param Employee                $employee
      * @param EmployeeSalaryComponent $employee_salary_component
      * @param SalaryComponent         $salary_component
@@ -62,13 +56,11 @@ class EmployeeListController extends Controller
      * @author Bertrand Kintanar
      */
     public function __construct(
-        Sentinel $auth,
         Employee $employee,
         EmployeeSalaryComponent $employee_salary_component,
         SalaryComponent $salary_component,
         Pagination $pagination
     ) {
-        parent::__construct($auth);
 
         $this->employee = $employee;
         $this->employee_salary_component = $employee_salary_component;
@@ -96,8 +88,6 @@ class EmployeeListController extends Controller
     /**
      * Show the PIM - Employee List.
      *
-     * @Get("pim/employee-list")
-     *
      * @param PIMRequest $request
      *
      * @return \Illuminate\View\View
@@ -106,7 +96,11 @@ class EmployeeListController extends Controller
      */
     public function index(PIMRequest $request)
     {
-        $employees = $this->employee->getEmployeeList(true, $request->sort(), $request->direction());
+        $employees = $this->employee->getEmployeeList(false, $request->sort(), $request->direction());
+
+//        dd($employees->get());
+
+        return $this->xhr($employees->get());
 
         $this->data['employees'] = $employees;
         $this->data['employee_id_prefix'] = $this->employee_id_prefix;
@@ -126,22 +120,6 @@ class EmployeeListController extends Controller
     private function getColumns()
     {
         return $this->columns;
-    }
-
-    /**
-     * Show the PIM - Index - redirects to pim/employee-list.
-     *
-     * @Get("pim")
-     *
-     * @param PIMRequest $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     *
-     * @author Bertrand Kintanar
-     */
-    public function pim(PIMRequest $request)
-    {
-        return redirect()->to($request->path().'/employee-list');
     }
 
     /**

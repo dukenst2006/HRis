@@ -76,56 +76,11 @@ class Breadcrumb
      */
     public function isActive($href)
     {
-        if ($this->request->is($href.'*')) {
+        if ($this->request->is($href . '*')) {
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Format link to a phrase
-     * ex. "hello-world" to "Hello World".
-     * 
-     * @param string $link
-     *
-     * @return string
-     *
-     * @author Harlequin Doyon
-     */
-    private function linkToPhrase($link)
-    {
-        $name = str_replace('-', ' ', $link);
-
-        return ucwords($name);
-    }
-
-    /**
-     * Break link slashes to object array.
-     *
-     * @return array
-     *
-     * @author Harlequin Doyon
-     */
-    public function links()
-    {
-        $sublinks = explode('/', $this->request->path());
-        $links = [];
-        $href = '';
-
-        foreach ($sublinks as $index => $sublink) {
-            if (!$index) {
-                $href .= '/';
-            }
-            $href .= $sublink;
-
-            $links[] = (object) [
-                'name' => $this->linkToPhrase($sublink),
-                'href' => $href,
-            ];
-        }
-
-        return $links;
     }
 
     /**
@@ -147,5 +102,50 @@ class Breadcrumb
         $output .= call_user_func($this->outer_breadcrumb, $inner);
 
         return $output;
+    }
+
+    /**
+     * Break link slashes to object array.
+     *
+     * @return array
+     *
+     * @author Harlequin Doyon
+     */
+    public function links()
+    {
+        $sublinks = explode('/', $this->request->path());
+        $links = [];
+        $href = '';
+
+        foreach ($sublinks as $index => $sublink) {
+            if (!$index) {
+                $href .= '/';
+            }
+            $href .= $sublink;
+
+            $links[] = (object)[
+                'name' => $this->linkToPhrase($sublink),
+                'href' => $href,
+            ];
+        }
+
+        return $links;
+    }
+
+    /**
+     * Format link to a phrase
+     * ex. "hello-world" to "Hello World".
+     *
+     * @param string $link
+     *
+     * @return string
+     *
+     * @author Harlequin Doyon
+     */
+    private function linkToPhrase($link)
+    {
+        $name = str_replace('-', ' ', $link);
+
+        return ucwords($name);
     }
 }

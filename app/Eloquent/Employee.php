@@ -110,6 +110,16 @@ class Employee extends Model
      *
      * @author Bertrand Kintanar
      */
+    public function emergencyContacts()
+    {
+        return $this->hasMany('HRis\Eloquent\EmergencyContact', 'employee_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     *
+     * @author Bertrand Kintanar
+     */
     public function customFieldValues()
     {
         return $this->hasMany('HRis\Eloquent\CustomFieldValue', 'employee_id', 'id');
@@ -150,18 +160,26 @@ class Employee extends Model
     public function getEmployeeById($employee_id, $user_id)
     {
         if ($employee_id) {
-            return self::whereEmployeeId($employee_id)->with('user', 'country', 'province', 'city', 'jobHistories',
-                'dependents', 'employeeWorkShift', 'customFieldValues')->first();
+            $employee = self::whereEmployeeId($employee_id)->with([
+                'user', 'country', 'province', 'city', 'jobHistories', 'emergencyContacts', 'dependents', 'employeeWorkShift', 'customFieldValues', 'workExperiences', 'educations', 'skills'
+            ])->first();
+            $employee->job_history = $employee->jobHistory();
+
+            return $employee;
         }
 
-        return self::whereUserId($user_id)->with('user', 'country', 'province', 'city', 'jobHistories', 'dependents',
-            'employeeWorkShift', 'customFieldValues')->first();
+        $employee = self::whereUserId($user_id)->with([
+            'user', 'country', 'province', 'city', 'jobHistories', 'emergencyContacts', 'dependents', 'employeeWorkShift', 'customFieldValues', 'workExperiences', 'educations', 'skills'
+        ])->first();
+        $employee->job_history = $employee->jobHistory();
+
+        return $employee;
     }
 
     /**
      * @param bool|true $paginate
-     * @param string    $sort
-     * @param string    $direction
+     * @param string $sort
+     * @param string $direction
      *
      * @return mixed
      *
@@ -210,7 +228,7 @@ class Employee extends Model
      */
     public function getFullNameAttribute()
     {
-        return $this->first_name.' '.($this->middle_name ? $this->middle_name.' ' : '').$this->last_name.($this->suffix_name ? ' '.$this->suffix_name : '');
+        return $this->first_name . ' ' . ($this->middle_name ? $this->middle_name . ' ' : '') . $this->last_name . ($this->suffix_name ? ' ' . $this->suffix_name : '');
     }
 
     /**
@@ -256,7 +274,7 @@ class Employee extends Model
         }
 
         return [
-            'in_time'  => $time_in ? $time_in->swipe_time : null,
+            'in_time' => $time_in ? $time_in->swipe_time : null,
             'out_time' => $time_out ? $time_out->swipe_time : null,
         ];
     }
@@ -290,7 +308,7 @@ class Employee extends Model
      */
     public function jobHistory()
     {
-        return $this->jobHistories()->with('workShift', 'jobTitle')->orderBy('job_histories.id', 'desc')->first();
+        return $this->jobHistories()->first();
     }
 
     /**
@@ -300,18 +318,8 @@ class Employee extends Model
      */
     public function jobHistories()
     {
-        return $this->hasMany('HRis\Eloquent\JobHistory');
-    }
-
-    /**
-     * @return mixed
-     *
-     * @author Bertrand Kintanar
-     */
-    public function orderedJobHistories()
-    {
-        return $this->jobHistories()->with('jobTitle', 'department', 'workShift',
-            'location')->orderBy('job_histories.id', 'desc')->get();
+        return $this->hasMany('HRis\Eloquent\JobHistory')->with('jobTitle', 'department', 'workShift',
+            'location')->orderBy('job_histories.id', 'desc');
     }
 
     /**

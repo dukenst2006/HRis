@@ -1,22 +1,10 @@
 <?php
 
-/**
- * This file is part of the HRis Software package.
- *
- * HRis - Human Resource and Payroll System
- *
- * @link    http://github.com/HB-Co/HRis
- */
-
 namespace HRis\Http\Controllers\Auth;
 
 use HRis\Http\Controllers\Controller;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Foundation\Auth\ResetsPasswords;
 
-/**
- * Class PasswordController.
- */
 class PasswordController extends Controller
 {
     /*
@@ -30,21 +18,15 @@ class PasswordController extends Controller
     |
     */
 
-//	use ResetsPasswords;
+    use ResetsPasswords;
 
     /**
      * Create a new password controller instance.
      *
-     * @param \Illuminate\Contracts\Auth\Guard          $auth
-     * @param \Illuminate\Contracts\Auth\PasswordBroker $passwords
-     *
-     * @author Bertrand Kintanar
+     * @return void
      */
-    public function __construct(Guard $auth, PasswordBroker $passwords)
+    public function __construct()
     {
-        $this->auth = $auth;
-        $this->passwords = $passwords;
-
         $this->middleware('guest');
     }
 }

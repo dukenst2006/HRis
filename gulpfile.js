@@ -1,16 +1,5 @@
 var elixir = require('laravel-elixir');
 
-var paths = {
-    'bower_components': './resources/assets/bower_components',
-    'fonts': './resources/fonts',
-    'build': './public/build',
-    'plugins': './public/js/plugins',
-    'scripts': './public/js',
-    'styles': './public/css',
-    'output': './public/output',
-    'root': './'
-};
-
 /*
  |--------------------------------------------------------------------------
  | Elixir Asset Management
@@ -22,68 +11,66 @@ var paths = {
  |
  */
 
-elixir(function(mix) {
+var paths = {
+    'jquery': './vendor/bower_components/jquery/',
+    'vue': './vendor/bower_components/vue/',
+    'router': './vendor/bower_components/vue-router/',
+    'bootstrap': './vendor/bower_components/bootstrap-sass/assets/',
+    'fontawesome': './vendor/bower_components/font-awesome/',
+    'cookies': './vendor/bower_components/cookies-js/',
+    'bourbon': './vendor/bower_components/bourbon/app/assets/',
+    'dropzone': './vendor/bower_components/dropzone/',
+    'datepicker': './vendor/bower_components/bootstrap-datepicker/',
+    'jasny': './vendor/bower_components/jasny-bootstrap/',
+    'icheck': './vendor/bower_components/iCheck/',
+    'chosen': './vendor/bower_components/chosen/',
+    'metisMenu': './vendor/bower_components/metisMenu/',
+    'slimScroll': './vendor/bower_components/slimScroll/',
+    'sweetalert2': './vendor/bower_components/sweetalert2/',
+    'inspinia': './resources/assets/sass/inspinia/'
+}
 
-    /**
-     * Styles
-     */
-    mix.less([
-        'dependencies.less'
-    ], paths.styles + '/dependencies.css')
-    .sass([
-        'style.sass'
-    ], paths.styles + '/style.css')
-    .styles([
-    	'dependencies.css',
-        'animate.css',
-        'plugins/iCheck/custom.css',
-        '../../resources/assets/bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
-        'style.css'
-    ], null, paths.styles);
-
-    /**
-     * Scripts
-     */
+elixir(function (mix) {
+    mix.sass("*.*", 'public/css/app.css', {includePaths: [paths.bootstrap + 'stylesheets', paths.fontawesome + 'scss', paths.bourbon + 'stylesheets']});
+    mix.sass("inspinia/style.sass", 'public/css/inspinia.css');
+    mix.styles([
+        'public/css/app.css',
+        'public/css/animate.css',
+        'public/css/icheck.css',
+        paths.datepicker + 'dist/css/bootstrap-datepicker3.min.css',
+        paths.jasny + 'dist/css/jasny-bootstrap.min.css',
+        paths.metisMenu + 'dist/metisMenu.min.css',
+        paths.sweetalert2 + 'dist/sweetalert2.css',
+        'public/css/inspinia.css'
+    ], 'public/css/all.css', './');//.version('public/css/app.css');
+    mix.copy(paths.bootstrap + 'fonts/bootstrap/**', 'public/fonts/bootstrap')
+        .copy(paths.fontawesome + 'fonts/**', 'public/fonts/fontawesome')
+        .copy(paths.chosen + '*.png', 'public/images')
+        .copy('resources/assets/tinymce/**', 'public/tinymce');
     mix.scripts([
-        paths.bower_components + '/jquery/dist/jquery.min.js',
-        paths.bower_components + '/bootstrap/dist/js/bootstrap.min.js',
-        paths.bower_components + '/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
-        paths.bower_components + '/jasny-bootstrap/dist/js/jasny-bootstrap.min.js',
-        paths.bower_components + '/chosen/chosen.jquery.min.js',
-        paths.bower_components + '/iCheck/icheck.min.js',
-        paths.bower_components + '/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js',
-        paths.bower_components + '/sweetalert2/dist/sweetalert2.min.js',
-        paths.bower_components + '/moment/moment.js',
-        //paths.bower_components + '/cropper/dist/cropper.min.js',
-        paths.plugins + '/metisMenu/jquery.metisMenu.js',
-        paths.plugins + '/slimscroll/jquery.slimscroll.min.js',
-        paths.plugins + '/pace/pace.min.js',
-        paths.scripts + '/inspinia.js',
-        paths.scripts + '/custom.js'
-    ], null, './');
-
-    /**
-     * Styles and Script Version
-     */
-    mix.version([paths.styles + '/all.css', paths.scripts + '/all.js']);
-
-    /**
-     * Fonts & Images
-     */
-    mix.copy(paths.bower_components + '/font-awesome/fonts', paths.build + '/fonts')
-       .copy(paths.bower_components + '/jquery.filthypillow/*.*', paths.plugins + '/jquery.filthypillow/')
-       .copy(paths.bower_components + '/typeahead.js/dist/', paths.plugins + '/typeahead/')
-       .copy(paths.bower_components + '/bootstrap/fonts', paths.build + '/fonts')
-       .copy(paths.bower_components + '/chosen/*.png', paths.build + '/css')
-       .copy(paths.bower_components + '/cropper/src/img/bg.png', paths.build + '/img/')
-       .copy(paths.styles + '/plugins/iCheck/*.png', paths.build + '/css')
-       .copy(paths.fonts + '/OpenSans', paths.build + '/fonts')
-       .copy(paths.styles + '/patterns', paths.build + '/css/patterns');
-
-    /**
-     * Browserify
-     */
-    mix.browserify('modules/time/attendance/app.js', 'public/js/attendance.js');
-    mix.browserify('modules/time/requisition/app.js', 'public/js/requisition.js');
-    mix.browserify('modules/time/holidays_and_events/app.js', 'public/js/holidays_and_events.js');
+        paths.jquery + "dist/jquery.js",
+        paths.bootstrap + "javascripts/bootstrap.js",
+        paths.cookies + "dist/cookies.js",
+        paths.vue + "dist/vue.js",
+        paths.router + "dist/vue-router.js",
+        paths.dropzone + "dist/dropzone.js",
+        paths.datepicker + "dist/js/bootstrap-datepicker.min.js",
+        paths.jasny + "dist/js/jasny-bootstrap.min.js",
+        paths.icheck + "icheck.min.js",
+        paths.chosen + "chosen.jquery.min.js",
+        paths.metisMenu + "dist/metisMenu.min.js",
+        paths.slimScroll + "jquery.slimscroll.min.js",
+        paths.sweetalert2 + "dist/sweetalert2.min.js",
+        "resources/assets/js/vendor/ie10-viewport-bug-workaround.js",
+        "resources/assets/js/vendor/inspinia.js",
+        "resources/assets/js/vendor/custom.js",
+    ], 'public/js/vendor.js', './')
+        .browserify('default.js', 'public/js/default.js')
+        .browserSync({proxy : 'https://hris-vue.dev'});
+        /*.version([
+         'js/vendor.js',
+         'js/default.js',
+         'js/user.js',
+         'js/admin.js'
+         ])*/;
 });

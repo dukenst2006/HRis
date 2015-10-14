@@ -12,7 +12,7 @@
 */
 
 $app = new Illuminate\Foundation\Application(
-    realpath(__DIR__.'/../')
+    realpath(__DIR__ . '/../')
 );
 
 /*
@@ -42,14 +42,6 @@ $app->singleton(
 );
 
 require_once 'constants.php';
-
-if (!$app->runningInConsole()) {
-    $server = $_SERVER['HTTP_HOST'];
-
-    if (strpos($server, 'hris-test.liberty')) {
-        $app->loadEnvironmentFrom('.env.testing');
-    }
-}
 
 /*
 |--------------------------------------------------------------------------

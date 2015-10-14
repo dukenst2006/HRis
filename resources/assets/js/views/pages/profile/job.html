@@ -1,0 +1,155 @@
+<div class="row">
+    <navbar-static-profile-top></navbar-static-profile-top>
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Job Details</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <form method="POST" onsubmit="return false;" accept-charset="UTF-8" class="form-horizontal">
+                    <input name="employee_id" type="hidden" v-model="employee.id">
+
+                    <!-- Start - Job Details -->
+                    <div class="form-group">
+                        <label for="job_title_id" class="col-md-2 control-label">Job Title</label>
+                        <div class="col-sm-4">
+                            <select v-model="employee.job_history.job_title_id" class="vue-chosen" disabled="disabled" options="job_titles_chosen" id="job_title_id" v-chosen="employee.job_history.job_title_id"></select>
+                        </div>
+
+                        <label for="employment_status_id" class="col-md-2 control-label">Employment Status</label>
+                        <div class="col-sm-4">
+                            <select v-model="employee.job_history.employment_status_id" class="vue-chosen" disabled="disabled" options="employment_statuses_chosen" id="employment_status_id" v-chosen="employee.job_history.employment_status_id"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department_id" class="col-md-2 control-label">Department</label>
+                        <div class="col-sm-4">
+                            <select v-model="employee.job_history.department_id" class="vue-chosen" disabled="disabled" options="departments_chosen" id="department_id" v-chosen="employee.job_history.department_id"></select>
+                        </div>
+
+                        <label for="effective_date" class="col-md-2 control-label">Effective Date</label>
+                        <div class="col-sm-4" id="datepicker_effective_date">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input class="form-control" data-mask="9999-99-99" disabled="disabled" name="effective_date" type="text" v-model="employee.job_history.effective_date" id="effective_date">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location_id" class="col-md-2 control-label">Location</label>
+                        <div class="col-sm-4">
+                            <select v-model="employee.job_history.location_id" class="vue-chosen" disabled="disabled" options="locations_chosen" id="location_id" v-chosen="employee.job_history.location_id"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comments" class="col-md-2 control-label">Comments</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control form-fields" rows="3" disabled="disabled" style="resize:vertical;" name="comments" v-model="employee.job_history.comments" id="comments" cols="50"></textarea>
+                        </div>
+                    </div>
+                    <!-- End - Job Details -->
+
+                    <div class="hr-line-dashed"></div>
+
+                    <!-- Start - Employment Commencement -->
+                    <h4>Employment Commencement</h4><br>
+                    <div class="form-group">
+                        <label for="joined_date" class="col-md-2 control-label">Joined Date</label>
+                        <div class="col-md-4" id="datepicker_joined_date">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input class="form-control" data-mask="9999-99-99" disabled="disabled" name="joined_date" type="text" v-model="employee.joined_date" id="joined_date">
+                            </div>
+                        </div>
+
+                        <label for="probation_end_date" class="col-md-2 control-label">Probation End Date</label>
+                        <div class="col-md-4" id="datepicker_probation_end_date">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input class="form-control" data-mask="9999-99-99" disabled="disabled" name="probation_end_date" type="text" v-model="employee.probation_end_date" id="probation_end_date">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="permanency_date" class="col-md-2 control-label">Date of Permanency</label>
+                        <div class="col-md-4" id="datepicker_permanency_date">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input class="form-control" data-mask="9999-99-99" disabled="disabled" name="permanency_date" type="text" v-model="employee.permanency_date" id="permanency_date">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End - Employment Commencement -->
+
+                    <div class="hr-line-dashed"></div>
+
+                    <!-- Start - Control Buttons -->
+                    <div class="form-group save-form" style="display:none;">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <a href="#0" class="btn btn-white btn-xs cancel-form" v-on="click: cancelForm">Cancel</a>
+                            <input class="btn btn-primary btn-xs" type="submit" v-on="click: submitForm" value="Save changes">
+                        </div>
+                    </div>
+                    <div class="form-group" v-if="has_access[permission + '.update']">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <a href="#0" class="btn btn-primary btn-xs modify-form" v-on="click: modifyForm">Modify</a>
+                        </div>
+                    </div>
+                    <!-- End - Control Buttons -->
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Job History</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Department</th>
+                            <th>Effective Date</th>
+                            <th>Employment Status</th>
+                            <th>Location</th>
+                            <th>Comments</th>
+                            <th class="fix-width">Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="job_histories_body">
+
+                        <tr v-repeat="job_history in job_histories" class="job_histories_list" id="job_history_1">
+
+                            <td v-if="job_titles_chosen[job_history.job_title_id-1]">{{job_titles_chosen[job_history.job_title_id-1].text}}</td>
+                            <td v-if="departments_chosen[job_history.department_id-1]">{{departments_chosen[job_history.department_id-1].text}}</td>
+                            <td>{{job_history.effective_date ? job_history.effective_date.slice(0,10) : ''}}</td>
+                            <td v-if="employment_statuses_chosen[job_history.employment_status_id-1]"><span class="label {{employment_statuses_chosen[job_history.employment_status_id-1].class}}">{{employment_statuses_chosen[job_history.employment_status_id-1].text}}</span></td>
+                            <td v-if="employment_statuses_chosen[job_history.location_id-1]">{{locations_chosen[job_history.location_id-1].text}}</td>
+                            <td>{{job_history.comments}}</td>
+                            <td>
+                                <button v-if="job_histories.length > 1" rel="delete" id="delete_{{job_history.id}}" v-if="has_access[permission + '.delete']" class="btn btn-primary btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="" type="button" v-on="click: deleteRecord(job_history, $index)" data-original-title="Delete"><i class="fa fa-times"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

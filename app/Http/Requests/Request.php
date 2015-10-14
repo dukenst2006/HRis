@@ -1,22 +1,22 @@
 <?php
 
-/**
- * This file is part of the HRis Software package.
- *
- * HRis - Human Resource and Payroll System
- *
- * @link    http://github.com/HB-Co/HRis
- */
-
 namespace HRis\Http\Requests;
 
+use HRis\Eloquent\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
-/**
- * Class Request.
- */
 abstract class Request extends FormRequest
 {
+    public function __construct()
+    {
+        $this->app_list_limit = env('APP_LIST_LIMIT', 50);
+        $token = JWTAuth::getToken();
+        if (!empty($token)) {
+            $user = JWTAuth::toUser($token);
+            $this->logged_user = User::find($user->id);
+        }
+    }
     /**
      * @return mixed
      *

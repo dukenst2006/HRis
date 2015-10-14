@@ -30,10 +30,10 @@ class HRisSidebar extends BaseMenu
                 return '';
             }
 
-            $output = '<li class="'.$self->stylesheetClasses($menu, $is_active).'">';
-            $output .= '<a href="/'.$menu->href.'">';
-            $output .= '<i class="fa '.$menu->icon.'"></i>';
-            $output .= '<span class="nav-label">'.$menu->name.'</span>';
+            $output = '<li class="' . $self->stylesheetClasses($menu, $is_active) . '">';
+            $output .= '<a href="/' . $menu->href . '">';
+            $output .= '<i class="fa ' . $menu->icon . '"></i>';
+            $output .= '<span class="nav-label">' . $menu->name . '</span>';
             $output .= $is_nested ? '<span class="fa arrow"></span>' : '';
             $output .= '</a>';
             $output .= $body;
@@ -41,25 +41,25 @@ class HRisSidebar extends BaseMenu
 
             return $output;
         })
-        ->outer(function ($body) {
-            return $body;
-        })
-        ->addLevel() // Second level menu
-        ->outer(function ($body) {
-            $output = '<ul class="nav nav-second-level">';
-            $output .= $body;
-            $output .= '</ul>';
+            ->outer(function ($body) {
+                return $body;
+            })
+            ->addLevel()// Second level menu
+            ->outer(function ($body) {
+                $output = '<ul class="nav nav-second-level">';
+                $output .= $body;
+                $output .= '</ul>';
 
-            return $output;
-        })
-        ->addLevel() // Third level menu
-        ->outer(function ($body) {
-            $output = '<ul class="nav nav-third-level">';
-            $output .= $body;
-            $output .= '</ul>';
+                return $output;
+            })
+            ->addLevel()// Third level menu
+            ->outer(function ($body) {
+                $output = '<ul class="nav nav-third-level">';
+                $output .= $body;
+                $output .= '</ul>';
 
-            return $output;
-        });
+                return $output;
+            });
 
         return parent::make();
     }
