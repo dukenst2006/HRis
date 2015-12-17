@@ -51,19 +51,19 @@ module.exports = {
             var route_name = route_segments[0];
             for (var i = 0; i < route_segments.length; i++) {
 
-                if (i && route_segments[i].indexOf('HRis') != 0) {              // TODO: get employee_id_prefix from config
+                if (i && route_segments[i].indexOf('HRis') != 0) {
                     route_name += '-' + route_segments[i];
                 }
 
                 if (route_segments[i] == 'pim') {
                     route_segments[i] = 'PIM';
                     continue;
-                } else if (route_segments[i].indexOf('HRis') != 0) {            // TODO: get employee_id_prefix from config
+                } else if (route_segments[i].indexOf('HRis') != 0) {
                     route_segments[i] = route_segments[i].replace('-', ' ');
                     route_segments[i] = this.toTitleCase(route_segments[i]);
                 }
 
-                if (route_segments[i].indexOf('HRis') == 0) {                   // TODO: get employee_id_prefix from config
+                if (route_segments[i].indexOf('HRis') == 0) {
                     route.push({
                         'segment': route_segments[i],
                         'name': route_name + '-personal-details',
